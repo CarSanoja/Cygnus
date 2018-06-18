@@ -1,0 +1,8 @@
+prefix=/home/robond/Documents/cygnus_ws/devel
+
+Name: cygnus_control
+Description: Description of cygnus_control
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/robond/Documents/cygnus_ws/devel/lib 
+Requires: 

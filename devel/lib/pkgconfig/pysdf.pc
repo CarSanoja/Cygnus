@@ -1,0 +1,8 @@
+prefix=/home/robond/Documents/cygnus_ws/devel
+
+Name: pysdf
+Description: Description of pysdf
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/robond/Documents/cygnus_ws/devel/lib 
+Requires: 
