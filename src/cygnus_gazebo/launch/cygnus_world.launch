@@ -18,9 +18,12 @@
   </include>
 
   
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find cygnus_description)/model/model.sdf'"/>
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find cygnus_description)/model/model.urdf'"/>
 
   <node name="cygnus_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-   args="-sdf -param robot_description -model cygnus" />
+   args="-urdf -param robot_description -model cygnus" />
+
+  <!-- ros_control cygnus launch file -->
+  <!--include file="$(find cygnus_control)/launch/cygnus_control.launch" /-->
 
 </launch>

@@ -1,0 +1,23 @@
+cygnus:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+
+  # Velocity Controllers ---------------------------------------
+  motor1_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: Cygnus_revo_motor1
+    pid: {p: 15.0, i: 0.01, d: 10.0}
+  motor2_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: Cygnus_revo_motor2
+    pid: {p: 15.0, i: 0.01, d: 10.0}
+  motor3_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: Cygnus_revo_motor3
+    pid: {p: 15.0, i: 0.01, d: 10.0}
+  motor4_velocity_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: Cygnus_revo_motor4
+    pid: {p: 15.0, i: 0.01, d: 10.0}

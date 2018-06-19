@@ -1,0 +1,14 @@
+<launch>
+
+    <rosparam file="$(find cygnus_hardware_interface)/config/hardware.yaml" command="load"/>
+    <rosparam file="$(find cygnus_hardware_interface)/config/controllers.yaml" command="load"/>
+    <rosparam file="$(find cygnus_hardware_interface)/config/joint_limits.yaml" command="load"/>
+    <node name="cygnus_hardware_interface" pkg="cygnus_hardware_interface" type="cygnus_hardware_interface_node" output="screen"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" ns="/"
+        args="
+            /cygnus/controller/state
+            /cygnus/controller/position/YOUR_ROBOT_JOINT
+            /cygnus/controller/position/YOUR_OTHER_ROBOT_JOINT
+        "/>
+
+</launch>
