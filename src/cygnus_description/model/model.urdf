@@ -278,30 +278,30 @@
  <transmission name="tran_motor2">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="Cygnus_revo_motor2">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor2">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
     </actuator>
   </transmission>
 
   <transmission name="tran_motor3">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="Cygnus_revo_motor3">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor3">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
     </actuator>
   </transmission>
 
   <transmission name="tran_motor4">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="Cygnus_revo_motor4">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor4">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
     </actuator>
   </transmission>
 
