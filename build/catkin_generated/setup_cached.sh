@@ -8,4 +8,3 @@
 
 # modified environment variables
 export PWD="/home/robond/Documents/cygnus_ws/build"
-export PYTHONPATH="/home/robond/Documents/cygnus_ws/devel/lib/python2.7/dist-packages:$PYTHONPATH"

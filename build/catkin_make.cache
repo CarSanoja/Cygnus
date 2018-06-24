@@ -1,2 +1,2 @@
-cygnus_control:cygnus_description:cygnus_gazebo
+cygnus_control:cygnus_description:cygnus_gazebo:cygnus_hardware_interface
 -DCATKIN_DEVEL_PREFIX=/home/robond/Documents/cygnus_ws/devel -DCMAKE_INSTALL_PREFIX=/home/robond/Documents/cygnus_ws/install -G Unix Makefiles
