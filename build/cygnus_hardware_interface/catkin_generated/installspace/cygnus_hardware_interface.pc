@@ -1,8 +1,0 @@
-prefix=/home/robond/Documents/cygnus_ws/install
-
-Name: cygnus_hardware_interface
-Description: Description of cygnus_hardware_interface
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/robond/Documents/cygnus_ws/install/lib 
-Requires: 
