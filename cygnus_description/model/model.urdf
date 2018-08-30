@@ -53,7 +53,7 @@
     </collision>
     <visual >
       <geometry>
-        <mesh filename="package://cygnus_description/meshes/aspa1_2.dae" scale="1 1 1"/>
+        <mesh filename="package://cygnus_description/meshes/aspa1.dae" scale="0.01 0.01 0.01"/>
       </geometry>
     </visual>
   </link>
@@ -73,7 +73,7 @@
     </collision>
     <visual >
       <geometry>
-        <mesh filename="package://cygnus_description/meshes/aspa1_2.dae" scale="1 1 1"/>
+        <mesh filename="package://cygnus_description/meshes/aspa1.dae" scale="0.01 0.01 0.01"/>
       </geometry>
     </visual>
   </link>
@@ -119,7 +119,7 @@
 <joint name="Cygnus_revo_motor1" type="continuous">
     <parent link="base_link"/>
     <child link="Cygnus__Aspa_1"/>
-    <origin rpy="0  0  0" xyz="0.224 0 0.1"/>
+    <origin rpy="0  0  0" xyz="0.224 0 0.062"/>
     <axis xyz="0  0  1"/>
     <limit effort="0.01428" velocity="254"/>
   </joint>
@@ -127,7 +127,7 @@
   <joint name="Cygnus_revo_motor2" type="continuous">
     <parent link="base_link"/>
     <child link="Cygnus__Aspa_2"/>
-    <origin rpy="0  0  0" xyz="-0.224 0 0.1"/>
+    <origin rpy="0  0  0" xyz="-0.224 0 0.062"/>
     <axis xyz="0  0  1"/>
     <limit effort="0.01428" velocity="254"/>
   </joint>
