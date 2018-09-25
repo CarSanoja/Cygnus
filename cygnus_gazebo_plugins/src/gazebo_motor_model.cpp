@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-#include "rotors_gazebo_plugins/gazebo_motor_model.h"
+#include "cygnus_gazebo_plugins/gazebo_motor_model.h"
 
 #include "ConnectGazeboToRosTopic.pb.h"
 #include "ConnectRosToGazeboTopic.pb.h"

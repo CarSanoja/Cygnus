@@ -20,7 +20,7 @@
  */
 
 // MODULE HEADER INCLUDE
-#include "rotors_gazebo_plugins/gazebo_multirotor_base_plugin.h"
+#include "cygnus_gazebo_plugins/gazebo_multirotor_base_plugin.h"
 
 // STANDARD LIB INCLUDES
 #include <ctime>
