@@ -123,30 +123,106 @@
     <axis xyz="0  0  1"/>
     <limit effort="0.01428" velocity="254"/>
   </joint>
-
-  <joint name="Cygnus_revo_motor2" type="continuous">
-    <parent link="base_link"/>
-    <child link="Cygnus__Aspa_2"/>
-    <origin rpy="0  0  0" xyz="-0.224 0 0.062"/>
-    <axis xyz="0  0  1"/>
-    <limit effort="0.01428" velocity="254"/>
-  </joint>
+<gazebo>
+      <plugin name="$uno_motor_model" filename="librotors_gazebo_motor_model.so">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <jointName>Cygnus_revo_motor1</jointName>
+        <linkName>Cygnus__Aspa_1</linkName>
+        <turningDirection>"ccw"</turningDirection>
+        <timeConstantUp>${time_constant_up}</timeConstantUp>
+        <timeConstantDown>${time_constant_down}</timeConstantDown>
+        <maxRotVelocity>${max_rot_velocity}</maxRotVelocity>
+        <motorConstant>${motor_constant}</motorConstant>
+        <momentConstant>${moment_constant}</momentConstant>
+        <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+        <motorNumber>1</motorNumber>
+        <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
+        <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
+        <motorSpeedPubTopic>motor_speed/1</motorSpeedPubTopic>
+        <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
+      </plugin>
+    </gazebo>
 
   <joint name="Cygnus_revo_motor3" type="continuous">
     <parent link="base_link"/>
     <child link="Cygnus__Aspa_3"/>
-    <origin rpy="0  0  0" xyz="0.0 0.224 0.062"/>
-    <axis xyz="0  0 -1"/>
+    <origin rpy="0  0  0" xyz="-0.224 0 0.062"/>
+    <axis xyz="0  0  1"/>
     <limit effort="0.01428" velocity="254"/>
   </joint>
+<gazebo>
+      <plugin name="$tres_motor_model" filename="librotors_gazebo_motor_model.so">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <jointName>Cygnus_revo_motor3</jointName>
+        <linkName>Cygnus__Aspa_3</linkName>
+        <turningDirection>"ccw"</turningDirection>
+        <timeConstantUp>${time_constant_up}</timeConstantUp>
+        <timeConstantDown>${time_constant_down}</timeConstantDown>
+        <maxRotVelocity>${max_rot_velocity}</maxRotVelocity>
+        <motorConstant>${motor_constant}</motorConstant>
+        <momentConstant>${moment_constant}</momentConstant>
+        <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+        <motorNumber>1</motorNumber>
+        <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
+        <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
+        <motorSpeedPubTopic>motor_speed/3</motorSpeedPubTopic>
+        <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
+      </plugin>
+    </gazebo>
 
-  <joint name="Cygnus_revo_motor4" type="continuous">
+  <joint name="Cygnus_revo_motor2" type="continuous">
     <parent link="base_link"/>
-    <child link="Cygnus__Aspa_4"/>
+    <child link="Cygnus__Aspa_2"/>
     <origin rpy="0  0  0" xyz="0.0 -0.224 0.062"/>
     <axis xyz="0  0 -1"/>
     <limit effort="0.01428" velocity="254"/>
   </joint>
+<gazebo>
+      <plugin name="$dos_motor_model" filename="librotors_gazebo_motor_model.so">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <jointName>Cygnus_revo_motor2</jointName>
+        <linkName>Cygnus__Aspa_2</linkName>
+        <turningDirection>"cw"</turningDirection>
+        <timeConstantUp>${time_constant_up}</timeConstantUp>
+        <timeConstantDown>${time_constant_down}</timeConstantDown>
+        <maxRotVelocity>${max_rot_velocity}</maxRotVelocity>
+        <motorConstant>${motor_constant}</motorConstant>
+        <momentConstant>${moment_constant}</momentConstant>
+        <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+        <motorNumber>1</motorNumber>
+        <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
+        <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
+        <motorSpeedPubTopic>motor_speed/2</motorSpeedPubTopic>
+        <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
+      </plugin>
+    </gazebo>
+
+  <joint name="Cygnus_revo_motor4" type="continuous">
+    <parent link="base_link"/>
+    <child link="Cygnus__Aspa_4"/>
+    <origin rpy="0  0  0" xyz="0.0 0.224 0.062"/>
+    <axis xyz="0  0 -1"/>
+    <limit effort="0.01428" velocity="254"/>
+  </joint>
+<gazebo>
+      <plugin name="$cuatro_motor_model" filename="librotors_gazebo_motor_model.so">
+        <robotNamespace>${robot_namespace}</robotNamespace>
+        <jointName>Cygnus_revo_motor4</jointName>
+        <linkName>Cygnus__Aspa_4</linkName>
+        <turningDirection>"cw"</turningDirection>
+        <timeConstantUp>${time_constant_up}</timeConstantUp>
+        <timeConstantDown>${time_constant_down}</timeConstantDown>
+        <maxRotVelocity>${max_rot_velocity}</maxRotVelocity>
+        <motorConstant>${motor_constant}</motorConstant>
+        <momentConstant>${moment_constant}</momentConstant>
+        <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+        <motorNumber>1</motorNumber>
+        <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
+        <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
+        <motorSpeedPubTopic>motor_speed/4</motorSpeedPubTopic>
+        <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
+      </plugin>
+    </gazebo>
 
 
 

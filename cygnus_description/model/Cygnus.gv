@@ -1,0 +1,20 @@
+digraph G {
+node [shape=box];
+"base_link" [label="base_link"];
+"Cygnus__Aspa_1" [label="Cygnus__Aspa_1"];
+"Cygnus__Aspa_2" [label="Cygnus__Aspa_2"];
+"Cygnus__Aspa_3" [label="Cygnus__Aspa_3"];
+"Cygnus__Aspa_4" [label="Cygnus__Aspa_4"];
+"Cygnus_Cuerpo" [label="Cygnus_Cuerpo"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"base_link" -> "Cygnus_revo_motor1" [label="xyz: 0.224 0 0.062 \nrpy: 0 -0 0"]
+"Cygnus_revo_motor1" -> "Cygnus__Aspa_1"
+"base_link" -> "Cygnus_revo_motor2" [label="xyz: 0 -0.224 0.062 \nrpy: 0 -0 0"]
+"Cygnus_revo_motor2" -> "Cygnus__Aspa_2"
+"base_link" -> "Cygnus_revo_motor3" [label="xyz: -0.224 0 0.062 \nrpy: 0 -0 0"]
+"Cygnus_revo_motor3" -> "Cygnus__Aspa_3"
+"base_link" -> "Cygnus_revo_motor4" [label="xyz: 0 0.224 0.062 \nrpy: 0 -0 0"]
+"Cygnus_revo_motor4" -> "Cygnus__Aspa_4"
+"base_link" -> "random_joint" [label="xyz: 0 0 0 \nrpy: 0 -0 0"]
+"random_joint" -> "Cygnus_Cuerpo"
+}
