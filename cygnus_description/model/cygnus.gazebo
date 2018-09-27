@@ -10,7 +10,7 @@
   </gazebo>
 
   <gazebo reference="Cygnus__Aspa_3">
-    <material>Gazebo/Red</material>
+    <material>Gazebo/Blue</material>
   </gazebo>
 
   <gazebo reference="Cygnus__Aspa_2">
@@ -18,7 +18,7 @@
   </gazebo>
 
   <gazebo reference="Cygnus__Aspa_4">
-    <material>Gazebo/Blue</material>
+    <material>Gazebo/Red</material>
   </gazebo>
 
   <gazebo>
