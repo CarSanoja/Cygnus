@@ -21,7 +21,7 @@
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find cygnus_description)/model/model.urdf'"/>
 
   <node name="cygnus_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-   args="-urdf -param robot_description -model cygnus" />
+   args="-urdf -param robot_description -model Cygnus" />
 
 
 </launch>
