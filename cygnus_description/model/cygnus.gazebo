@@ -21,9 +21,9 @@
     <material>Gazebo/Red</material>
   </gazebo>
 
-  <gazebo>
+  <gazebo >
       <plugin filename="librotors_gazebo_multirotor_base_plugin.so" name="rosbag">
-        <robotNamespace>Cygnus</robotNamespace>
+        <robotNamespace>cygnus</robotNamespace>
         <linkName>base_link</linkName>
         <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
       </plugin>
