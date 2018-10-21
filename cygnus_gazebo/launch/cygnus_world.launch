@@ -6,7 +6,10 @@
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
+  <arg name="enable_ground_truth" default="true"/>
+  <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/>
   <arg name="debug" default="false"/>
+
   
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find cygnus_gazebo)/worlds/empty.world"/>
@@ -17,7 +20,8 @@
     <arg name="debug" value="$(arg debug)"/>
   </include>
  
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find cygnus_description)/model/model.urdf'"/>
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find cygnus_description)/model/cygnus.urdf'
+    enable_ground_truth:=$(arg enable_ground_truth) "/>
 
   <node name="cygnus_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
         args="-urdf -param robot_description -model cygnus"> 
