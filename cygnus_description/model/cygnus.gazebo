@@ -1,26 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-
-  <gazebo reference="Cygnus_Cuerpo">
-    <material>Gazebo/Black</material>
-  </gazebo>
-
-  <gazebo reference="Cygnus__Aspa_1">
-    <material>Gazebo/Red</material>
-  </gazebo>
-
-  <gazebo reference="Cygnus__Aspa_3">
-    <material>Gazebo/Blue</material>
-  </gazebo>
-
-  <gazebo reference="Cygnus__Aspa_2">
-    <material>Gazebo/Blue</material>
-  </gazebo>
-
-  <gazebo reference="Cygnus__Aspa_4">
-    <material>Gazebo/Red</material>
-  </gazebo>
-
+  
   <gazebo >
       <plugin filename="librotors_gazebo_multirotor_base_plugin.so" name="rosbag">
         <robotNamespace>cygnus</robotNamespace>

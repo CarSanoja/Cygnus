@@ -2,7 +2,7 @@
 <launch>
 
   <arg name="world" default="empty"/> 
-  <arg name="paused" default="false"/>
+  <arg name="paused" default="true"/>
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
@@ -19,12 +19,14 @@
     <arg name="headless" value="$(arg headless)"/>
     <arg name="debug" value="$(arg debug)"/>
   </include>
- 
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find cygnus_description)/model/cygnus.urdf'
-    enable_ground_truth:=$(arg enable_ground_truth) "/>
-
-  <node name="cygnus_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-        args="-urdf -param robot_description -model cygnus"> 
-  </node>
+  
+  <group ns="cygnus">
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find cygnus_description)/model/cygnus.urdf'
+      enable_ground_truth:=$(arg enable_ground_truth) "/>
+    <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
+    <node name="cygnus_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+          args="-urdf -param robot_description -model cygnus"> 
+    </node>
+  </group>
   
 </launch>

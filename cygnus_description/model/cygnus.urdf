@@ -45,7 +45,9 @@
     </visual>
   </link>
 
-
+  <gazebo reference="Cygnus_Cuerpo">
+    <material>Gazebo/Black</material>
+  </gazebo>
 
   <link name="cygnus_aspa_1">
     <inertial>
@@ -65,7 +67,9 @@
     </visual>
   </link>
 
-
+  <gazebo reference="Cygnus__Aspa_1">
+    <material>Gazebo/Red</material>
+  </gazebo>
 
   <link name="cygnus_aspa_2">
     <inertial>
@@ -85,6 +89,10 @@
     </visual>
   </link>
 
+  <gazebo reference="Cygnus__Aspa_2">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
   <link name="cygnus_aspa_3">
     <inertial>
       <mass value="0.007"/>
@@ -102,6 +110,10 @@
       </geometry>
     </visual>
   </link>
+
+  <gazebo reference="Cygnus__Aspa_3">
+    <material>Gazebo/Blue</material>
+  </gazebo>
 
 
   <link name="cygnus_aspa_4">
@@ -121,6 +133,10 @@
       </geometry>
     </visual>
   </link>
+
+  <gazebo reference="Cygnus__Aspa_4">
+    <material>Gazebo/Red</material>
+  </gazebo>
 
 
 <joint name="cygnus_revo_motor_1" type="continuous">
@@ -181,7 +197,7 @@
         <motorNumber>1</motorNumber>
         <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
         <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
-        <motorSpeedPubTopic>motor_speed/1</motorSpeedPubTopic>
+        <motorSpeedPubTopic>motor_speed/0</motorSpeedPubTopic>
         <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
       </plugin>
     </gazebo>
@@ -202,7 +218,7 @@
         <motorNumber>3</motorNumber>
         <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
         <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
-        <motorSpeedPubTopic>motor_speed/3</motorSpeedPubTopic>
+        <motorSpeedPubTopic>motor_speed/2</motorSpeedPubTopic>
         <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
       </plugin>
     </gazebo>
@@ -222,7 +238,7 @@
         <motorNumber>2</motorNumber>
         <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
         <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
-        <motorSpeedPubTopic>motor_speed/2</motorSpeedPubTopic>
+        <motorSpeedPubTopic>motor_speed/1</motorSpeedPubTopic>
         <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
       </plugin>
     </gazebo>
@@ -243,7 +259,7 @@
         <motorNumber>4</motorNumber>
         <rotorDragCoefficient>${rotor_drag_coefficient}</rotorDragCoefficient>
         <rollingMomentCoefficient>${rolling_moment_coefficient}</rollingMomentCoefficient>
-        <motorSpeedPubTopic>motor_speed/4</motorSpeedPubTopic>
+        <motorSpeedPubTopic>motor_speed/3</motorSpeedPubTopic>
         <rotorVelocitySlowdownSim>${rotor_velocity_slowdown_sim}</rotorVelocitySlowdownSim>
       </plugin>
     </gazebo>
