@@ -1,0 +1,36 @@
+#Hummingbird parameters
+#inertia : [ 0.007 , 0.000000 , 0.000000 , 0.000000 , 0.007 , 0.000000 , 0.000000 , 0.000000 , 0.012]
+inertia : [ 0.013735 , 0.000000 , 0.000000 , 0.000000 , 0.013868 , 0.000000 , 0.000000 , 0.000000 , 0.025071]
+allocation_matrix: [ 0.0 , -1.0 , 1.0 , 1.0 , 1.0 , 0.0 , -1.0 , 1.0, 0.0, 1.0, 1.0, 1.0, -1.0, 0.0, -1.0, 1.0]
+n_rotors: 4
+
+rotor_force_constant: 8.54858e-6
+rotor_moment_constant: 0.016000
+arm_length: 0.224
+
+#roll_gain: 16
+#pitch_gain: 20
+#roll_int_gain: 10
+#pitch_int_gain: 8
+#p_gain: 1.6
+#q_gain: 1.2
+#r_gain: 1.3
+
+#FUNCIONA
+#roll_gain: 0.005
+#pitch_gain: 0.005
+#roll_int_gain: 0
+#pitch_int_gain: 0
+#p_gain: 0.0005
+#q_gain: 0.0005
+#r_gain: 0.00001
+
+roll_gain: 0.0005
+pitch_gain: 0.0005
+roll_int_gain: 0
+pitch_int_gain: 0
+p_gain: 0.00005
+q_gain: 0.00002
+r_gain: 0.000001
+
+max_integrator_error: 0.1
