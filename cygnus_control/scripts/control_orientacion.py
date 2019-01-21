@@ -78,14 +78,18 @@ class PIDController:
 def calcular_wMotores(troll,tpitch,tyaw,ft):
 	t1 = troll/(0.00000008182*0.225)
 	t2 = tpitch/(0.00000008182*0.225)
-	t3 = 0*tyaw/0.00000000161
+	t3 = tyaw/0.00000000161
 	t4 = ft/0.00000008182
 	rospy.loginfo("*********")
+	rospy.loginfo("troll: " + str(troll) + " y t1: " + str(t1))
+	rospy.loginfo("tpitch: " + str(tpitch) + " y t2: " + str(t2))
+	rospy.loginfo("tyaw: " + str(tyaw) + " y t3: " + str(t3))
 	rospy.loginfo("ft es: " + str(ft) + " y t4 esta valiendo.." + str(t4))
-	w1 = math.sqrt(-t1-t2+t3+t4)*0.1047/2
-	w2 = math.sqrt(-t1+t2-t3+t4)*0.1047/2
-	w3 = math.sqrt(t1+t2+t3+t4)*0.1047/2
-	w4 = math.sqrt(t1-t2-t3+t4)*0.1047/2
+	w1 = math.sqrt(-t1-t2+t3+t4)*0.1047/2  - 43.5
+	w2 = math.sqrt(-t1+t2-t3+t4)*0.1047/2  - 43.5
+	w3 = math.sqrt(t1+t2+t3+t4)*0.1047/2   - 43.5
+	w4 = math.sqrt(t1-t2-t3+t4)*0.1047/2   - 43.5
+	rospy.loginfo("w1: "+str(w1) + " w2: "+str(w2)+" w3: "+str(w3)+" w4: "+str(w4))
 	return (w1,w2,w3,w4)
 
 
@@ -93,23 +97,16 @@ def odometry_callback(data,args):
 	global pid_roll, pid_pitch, pid_yaw, Ixx, Iyy, Izz, w_motores 
 	target_roll = args[0].roll
 	target_pitch = args[0].pitch 
-	target_yaw = 0
-	diff_roll = target_roll - data.pose.pose.orientation.x
-	diff_pitch = target_pitch - data.pose.pose.orientation.y 
-	diff_yaw = target_yaw - data.pose.pose.orientation.z
 	u_roll = pid_roll.update(data.pose.pose.orientation.x, float( str(data.header.stamp.secs) +"." + str(data.header.stamp.nsecs) ) )
 	u_pitch = pid_pitch.update(data.pose.pose.orientation.y, float( str(data.header.stamp.secs) +"." + str(data.header.stamp.nsecs) ) )
 	u_yaw = pid_yaw.update(data.pose.pose.orientation.z, float( str(data.header.stamp.secs) +"." + str(data.header.stamp.nsecs) ) )
-	tao_roll = u_roll*Ixx
-	tao_pitch = u_pitch*Iyy
-	tao_yaw = u_yaw*Izz
+	rospy.loginfo("u_roll: " + str(u_roll) + " u_pitch: " + str(u_pitch) + " u_yaw: " + str(u_yaw))
+	tao_roll = math.sqrt(2)*Ixx*u_roll
+	tao_pitch = math.sqrt(2)*Iyy*u_pitch
+	tao_yaw = math.sqrt(2)*Izz*u_yaw
+	rospy.loginfo("tao_roll: " + str(tao_roll) + " tao_pitch: " + str(tao_pitch) + " tao_yaw: " + str(tao_yaw))
 	w1, w2, w3, w4 = calcular_wMotores(tao_roll,tao_pitch,tao_yaw,args[0].thrust.z)
 	w_motores.angular_velocities = [w1,w2,w3,w4] 
-	#w_motores.angular_velocities[1] = w2
-	#w_motores.angular_velocities[2] = w3
-	#w_motores.angular_velocities[3] = w4
-	#rospy.loginfo("publicando velocidad motores")
-    #rospy.loginfo(w_motores.angular_velocities)
     	args[1].publish(w_motores)
 
 
@@ -119,17 +116,17 @@ def altitud_callback(data,args):
 	pid_roll.setTarget(data.roll)
 	pid_pitch.setTarget(data.pitch)
 	pid_yaw.setTarget(data.yaw_rate)
-	rospy.Subscriber('/iris/ground_truth/odometry', Odometry, odometry_callback,(data,args))
+	rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback,(data,args))
 	rospy.spin()
 
 
 def talker():
     rospy.init_node('control_orientacion', anonymous=True)
     rospy.loginfo("Definiendo el topico a publicar")
-    pub = rospy.Publisher('/iris/command/motor_speed', Actuators, queue_size=10)
+    pub = rospy.Publisher('/cygnus/command/motor_speed', Actuators, queue_size=10)
     #while not rospy.is_shutdown():
     rospy.loginfo("Subscribiendo a controlador de altitud ")
-    rospy.Subscriber('/iris/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust , altitud_callback,(pub))
+    rospy.Subscriber('/cygnus/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust , altitud_callback,(pub))
     rospy.spin()
 
 if __name__ == '__main__':
@@ -138,12 +135,12 @@ if __name__ == '__main__':
         Ixx = 0.013735
         Iyy = 0.013868
         Izz = 0.025071
-        kp_r = 0.01
-        kd_r = 0.05
-        kp_p = 0.01
-        kd_p = 0.05
-        kp_y = 0.01
-        kd_y = 0.05
+        kp_r = 1
+        kd_r = 0
+        kp_p = 1
+        kd_p = 0
+        kp_y = 1
+        kd_y = 0
         umax = 5.0 # max controller output, (N)
         alpha = 1 # derivative filter smoothing factor
         pid_roll = PIDController(kp = kp_r, ki = 0, kd = kd_r, max_windup = 1e6, u_bounds
