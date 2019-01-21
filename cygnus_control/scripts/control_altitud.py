@@ -107,18 +107,21 @@ def odometry_callback(data,args):
         empuje.thrust.z = empuje_global
         j+=1
     if diff>0:
-        empuje.thrust.z = 1.51*10 + empuje.thrust.z*float(u_)
+        empuje.thrust.z = 1.43*10 + empuje.thrust.z*float(u_)
     else:
-        empuje.thrust.z = 0.98*01.51*10 + empuje.thrust.z*float(u_)
+        empuje.thrust.z = 0.98*01.43*10 + empuje.thrust.z*float(u_)
 
     rospy.loginfo("agregado: " + str(empuje.thrust.z*float(u_)) )
-    if empuje.thrust.z<14.9:
-        empuje.thrust.z = 14.90000
-    elif empuje.thrust.z>15.4:
-        empuje.thrust.z = 15.40000
+    if empuje.thrust.z<13.6:
+        empuje.thrust.z = 13.60000
+    elif empuje.thrust.z>15:
+        empuje.thrust.z = 15.20000
 
     if u_!=0:
         rospy.loginfo("publicando empuje")
+        #empuje.roll =0
+        #empuje.pitch =0
+        #empuje.yaw_rate =0
         rospy.loginfo(empuje.thrust.z)
         pub.publish(empuje)
 
@@ -171,7 +174,7 @@ def pose_callback(data,args):
     pid.setTarget(target)
     rospy.loginfo("****************************************")
     rospy.loginfo("Nueva lectura de odometria")
-    rospy.Subscriber('/iris/ground_truth/odometry', Odometry, odometry_callback,(target,pid,args))
+    rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback,(target,pid,args))
     rospy.spin()
     
 
@@ -179,18 +182,18 @@ def talker():
     rospy.init_node('controller_z', anonymous=True)
     rate = rospy.Rate(0.0001) # 10hz
     rospy.loginfo("Definiendo el topico a publicar")
-    pub = rospy.Publisher('/iris/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust, queue_size=10)
+    pub = rospy.Publisher('/cygnus/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust, queue_size=10)
     while not rospy.is_shutdown():
         rospy.loginfo("Subscribiendo a poseStamped")
-        rospy.Subscriber('/iris/command/pose', PoseStamped , pose_callback,(pub))
+        rospy.Subscriber('/cygnus/command/pose', PoseStamped , pose_callback,(pub))
         rospy.spin()
 
 if __name__ == '__main__':
     try:
         #CONSTANTES
-        kp = 0.01
-        ki = 0.00001
-        kd = 0.15
+        kp = 0.19
+        ki = 0.0000
+        kd = 0.3
         umax = 5.0 # max controller output, (N)
         alpha = 1 # derivative filter smoothing factor
         # Simulation parameters
