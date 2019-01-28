@@ -55,6 +55,10 @@ class PIDController:
     def setMaxWindup(self, max_windup):
         self.max_windup_ = int(max_windup)
 
+    def getTarget(self):
+        target = float(self.set_point_)
+        return target
+
     def update(self, measured_value, timestamp):
         delta_time = timestamp - self.last_timestamp_
         if delta_time == 0:
@@ -84,28 +88,25 @@ class PIDController:
 
 
 def odometry_callback(data,args):
-    global j
+    global j, empuje_global, empuje, pid
     y = data
-    pid = args[1]
-    target = args[0]
+    #pid = args[1]
+    #target = 1.0
     pub = args[2]
-    global empuje_global, empuje
-    #rospy.loginfo("****************************************")
-    #rospy.loginfo("Definiendo el topico a publicar")
-    #pub = rospy.Publisher('/firefly/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust, queue_size=10)
+    target = pid.getTarget()
+    rospy.loginfo("**********************")
+    rospy.loginfo("Imprimiendo target en Z")
+    rospy.loginfo(target)
+    
     diff = float(target) - float(y.pose.pose.position.z)
-    #rospy.loginfo("target es: "+str(target))
-    #rospy.loginfo("posicion actual: " + str(y.pose.pose.position.z))
-    #rospy.loginfo("diff es: "+str(diff))
     u_ = pid.update(y.pose.pose.position.z, float( str(y.header.stamp.secs) +"." + str(y.header.stamp.nsecs) ) )
-    #rospy.loginfo("El valor de u es: " +str(u_))
-    #rospy.loginfo("Empuje actual es: "+str(empuje.thrust.z))
 
     #Landing
-    if j==30:
+    if j<=100:
         rospy.loginfo("inicializando thrust")
         empuje.thrust.z = empuje_global
-        j+=1
+        j = j+1
+            
     if diff>0:
         empuje.thrust.z = 1.43*10 + empuje.thrust.z*float(u_)
     else:
@@ -116,84 +117,47 @@ def odometry_callback(data,args):
         empuje.thrust.z = 13.60000
     elif empuje.thrust.z>15:
         empuje.thrust.z = 15.20000
-
     if u_!=0:
         rospy.loginfo("publicando empuje")
-        #empuje.roll =0
-        #empuje.pitch =0
-        #empuje.yaw_rate =0
+        rospy.loginfo("********************")
+        rospy.loginfo("ROLL Deseado")
+        rospy.loginfo(empuje.roll)
+        rospy.loginfo("********************")
+        rospy.loginfo("PITCH deseado")
+        rospy.loginfo(empuje.pitch)
         rospy.loginfo(empuje.thrust.z)
         pub.publish(empuje)
 
 
-
-def plot(target,pid,time):
-    # Plot results
-    SP = np.ones_like(time)*target # altitude set point
-    fig = plt.figure()
-    ax1 = fig.add_subplot(211)
-    ax1.plot(time, soln[:,0],time,SP,'--')
-    ax1.set_xlabel('Time, (sec)')
-    ax1.set_ylabel('Altitude, (m)')
-
-    ax2 = fig.add_subplot(212)
-    ax2.plot(time, soln[:,1])
-    ax2.set_xlabel('Time, (sec)')
-    ax2.set_ylabel('Speed, (m/s)')
-    plt.tight_layout()
-    plt.show()
-
-    fig2 = plt.figure()
-    ax3 = fig2.add_subplot(111)
-    ax3.plot(time, pid.u_p, label='u_p', linewidth=3, color = 'red')
-    ax3.plot(time, pid.u_i, label='u_i', linewidth=3, color = 'blue')
-    ax3.plot(time, pid.u_d, label='u_d', linewidth=3, color = 'green')
-    ax3.set_xlabel('Time, (sec)')
-    ax3.set_ylabel('Control Effort')
-    h, l = ax3.get_legend_handles_labels()
-    ax3.legend(h, l)
-    plt.tight_layout()
-    plt.show()
-    ##################
-    y0 = soln[:,0] #altitude
-    rise_time_index =  np.argmax(y0>target)
-    RT = time[rise_time_index]
-    rospy.loginfo("The rise time is {0:.3f} seconds".format(RT))
-    OS = (np.max(y0) - target)/target*100
-    if OS < 0:
-        OS = 0
-    rospy.loginfo("The percent overshoot is {0:.1f}%".format(OS))
-    rospy.loginfo("The steady state offset at 30 seconds is {0:.3f} meters".format(abs(soln[-1,0]-r)))
-
-
-
 def pose_callback(data,args):
-    global pid
-    # Set altitude target
-    target = data.pose.position.z
-    pid.setTarget(target)
-    rospy.loginfo("****************************************")
-    rospy.loginfo("Nueva lectura de odometria")
-    rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback,(target,pid,args))
-    rospy.spin()
+    global pid, empuje
+    empuje.roll = data.roll
+    empuje.pitch = data.pitch
+    pid.setTarget(data.thrust.z)
     
 
 def talker():
+    global pid, target
     rospy.init_node('controller_z', anonymous=True)
-    rate = rospy.Rate(0.0001) # 10hz
+    #rate = rospy.Rate(0.0001) # 10hz
     rospy.loginfo("Definiendo el topico a publicar")
     pub = rospy.Publisher('/cygnus/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust, queue_size=10)
     while not rospy.is_shutdown():
         rospy.loginfo("Subscribiendo a poseStamped")
-        rospy.Subscriber('/cygnus/command/pose', PoseStamped , pose_callback,(pub))
+        rospy.Subscriber('/cygnus/command/roll_pitch_yawrate', RollPitchYawrateThrust , pose_callback,(pub))
+        rospy.loginfo("****************************************")
+        rospy.loginfo("Nueva lectura de odometria")
+        rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback,(target,pid,pub))
         rospy.spin()
 
 if __name__ == '__main__':
     try:
         #CONSTANTES
+        time_plot = 0
         kp = 0.19
-        ki = 0.0000
+        ki = 0
         kd = 0.3
+        target = 0
         umax = 5.0 # max controller output, (N)
         alpha = 1 # derivative filter smoothing factor
         # Simulation parameters
