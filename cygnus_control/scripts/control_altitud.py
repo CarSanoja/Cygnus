@@ -139,7 +139,7 @@ def pose_callback(data,args):
 def talker():
     global pid, target
     rospy.init_node('controller_z', anonymous=True)
-    #rate = rospy.Rate(0.0001) # 10hz
+    #rate = rospy.Rate(0.01) # 100hz
     rospy.loginfo("Definiendo el topico a publicar")
     pub = rospy.Publisher('/cygnus/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust, queue_size=10)
     while not rospy.is_shutdown():
