@@ -7,8 +7,8 @@ from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import Imu
 import numpy as np
 import math
-import matplotlib.pyplot as plt
 import tf
+import message_filters
 
 class PIDController:
     def __init__(self, kp = 0.0, ki = 0.0, kd = 0.0, max_windup = 20,
@@ -89,22 +89,38 @@ class PIDController:
 
 
 def odometry_callback(data,args):
-    global j, empuje_angles, pid_x, pid_y, Ax, Ay, target_z
+#def odometry_callback(data,data2):
+    rospy.loginfo("ENTRE")
+    global j, empuje_angles, pid_x, pid_y, Ax, Ay, pid
     pid_x = args[2]
     pid_y = args[3]
+    pid = args[5]
     target_y = pid_y.getTarget()
     target_x = pid_x.getTarget()
+    target = pid.getTarget()
+    rospy.loginfo("TARGET Z")
+    rospy.loginfo(target)
+    #target_x = data2.pose.position.x
+    #target_y = data2.pose.position.y
+    #target_z = data2.pose.position.z
+    
     pub = args[4]
     # Diferencia entre los targets
     diff_x = float(target_x) - float(data.pose.pose.position.x)
     diff_y = float(target_y) - float(data.pose.pose.position.y)
+    diff = float(target) - float(data.pose.pose.position.z)
+    rospy.loginfo("DIFF EN Z")
+    rospy.loginfo(diff)
     # Controladores PID para posicion X e Y
     u_x = pid_x.update(data.pose.pose.position.x, float( str(data.header.stamp.secs) +"." + str(data.header.stamp.nsecs) ) )
     u_y = pid_y.update(data.pose.pose.position.y, float( str(data.header.stamp.secs) +"." + str(data.header.stamp.nsecs) ) )
+    u_ = pid.update(data.pose.pose.position.z, float( str(data.header.stamp.secs) +"." + str(data.header.stamp.nsecs) ) )
     rospy.loginfo("***********************")
     rospy.loginfo(u_x)
     rospy.loginfo("***********************")
     rospy.loginfo(u_y)
+    rospy.loginfo("***********************")
+    rospy.loginfo(u_)
     ####################################################
     # theta_roll_d  = 0.09*[Ax*sin(yaw) - Ay*cos(yaw)]
     # omega_pitch_d = 0.09*[Ax*sin(yaw) + Ay*cos(yaw)]
@@ -190,21 +206,34 @@ def odometry_callback(data,args):
     rospy.loginfo("****************")
     rospy.loginfo(empuje_angles.pitch)
 
+    if diff>0:
+        empuje_angles.thrust.z = 1.43*10 + empuje_angles.thrust.z*float(u_)
+    else:
+        empuje_angles.thrust.z = 0.98*01.43*10 + empuje_angles.thrust.z*float(u_)
+
+    rospy.loginfo("agregado: " + str(empuje_angles.thrust.z*float(u_)) )
+    if empuje_angles.thrust.z<13.6:
+        empuje_angles.thrust.z = 13.60000
+    elif empuje_angles.thrust.z>15:
+        empuje_angles.thrust.z = 15.20000
+
     if u_x!=0 and u_y!=0:
-        #rospy.loginfo("publicando empuje")
-        empuje_angles.thrust.z = target_z
+        rospy.loginfo("publicando empuje en z")
+        rospy.loginfo(empuje_angles.thrust.z)
         pub.publish(empuje_angles)
-        rospy.sleep(0.01)
+        #rospy.sleep(0.002)
         
 
 def pose_callback(data):
-    global pid_x, pid_y, empuje_angles
+    global pid_x, pid_y, empuje_angles, pid
     # Set altitude target
     target_x = data.pose.position.x
     target_y = data.pose.position.y
-    empuje_angles.thrust.z = data.pose.position.z
+    #empuje_angles.thrust.z = data.pose.position.z
     pid_x.setTarget(target_x)
     pid_y.setTarget(target_y)
+    pid.setTarget(data.pose.position.z)
+    #rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback,(target_y,target_x,pid_x,pid_y,pub) )
     #rospy.spin()
     #rospy.sleep(1)
 
@@ -214,27 +243,35 @@ def imu_callback(data):
     Ay = data.linear_acceleration.y 
 
 def talker():
-    global pid_x, pid_y, target_x, target_y
+    global pid_x, pid_y, target_x, target_y, pid
     rospy.init_node('controller_xy', anonymous=True)
     #rate = rospy.Rate(0.01) # 10hz
     rospy.loginfo("Definiendo el topico a publicar")
-    pub = rospy.Publisher('/cygnus/command/roll_pitch_yawrate', RollPitchYawrateThrust, queue_size=5)
+    pub = rospy.Publisher('/cygnus/command/roll_pitch_yawrate_thrust', RollPitchYawrateThrust, queue_size=5)
     while not rospy.is_shutdown():
+        #odo_sub = message_filters.Subscriber('/cygnus/ground_truth/odometry', Odometry)
+        #pose_sub = message_filters.Subscriber('/cygnus/command/pose', PoseStamped)
+        #ts = message_filters.ApproximateTimeSynchronizer([odo_sub, pose_sub], 10, 0.1, allow_headerless=True)
+        #ts.registerCallback(odometry_callback)
         rospy.loginfo("Subscribiendo a poseStamped")
         rospy.Subscriber('/cygnus/command/pose', PoseStamped , pose_callback)
         rospy.loginfo("****************************************")
         rospy.loginfo("Nueva lectura de odometria")
-        rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback,(target_y,target_x,pid_x,pid_y,pub) )
-        rospy.Subscriber('/cygnus/imu', Imu , imu_callback)
+        rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback,(target_y,target_x,pid_x,pid_y,pub,pid) )
+        #rospy.Subscriber('/cygnus/imu', Imu , imu_callback)
 
         rospy.spin()
 
 if __name__ == '__main__':
     try:
         #CONSTANTES
-        kp = 0.015
+        kp = 0.009
         ki = 0
         kd = 0
+
+        kp_x = 0.015
+        ki_x = 0
+        kd_x = 0
 
         kp_y = 0.025
         ki_y = 0
@@ -251,11 +288,15 @@ if __name__ == '__main__':
         j=0
         # Create instance of PID_Controller class and 
         # initalize and set all the variables
-        pid_x = PIDController(kp = kp, ki = ki, kd = kd, max_windup = 1e6, u_bounds
+        pid_x = PIDController(kp = kp_x, ki = ki_x, kd = kd_x, max_windup = 1e6, u_bounds
             = [0, umax], alpha = alpha)
 
         pid_y = PIDController(kp = kp_y, ki = ki_y, kd = kd_y, max_windup = 1e6, u_bounds
             = [0, umax], alpha = alpha)
+
+        pid = PIDController(kp = kp, ki = ki, kd = kd, max_windup = 1e6, u_bounds
+            = [0, umax], alpha = alpha)
+        empuje_global =15.3000000
 
         empuje_angles = RollPitchYawrateThrust()
 
