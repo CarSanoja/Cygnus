@@ -171,9 +171,9 @@ def control_z(pid, angles,pid_y):
     actual_z = pid.getActualRef()
     diff = float(target) - float(actual_z)
     if (diff <= 0.002 and diff >= 0):
-        #pid_x.setTarget(1.5)
-        #pid_y.setTarget(1.5)
-        pass
+        pid_x.setTarget(1.5)
+        pid_y.setTarget(1.5)
+        pid.setTarget(1.5)
     u_ = pid.update(actual_time )
     if diff>0:
         aux_thrust = 1.43*10 + actual_thrust*float(u_) 
@@ -242,7 +242,7 @@ if __name__ == '__main__':
     try:
         #CONSTANTES
         kp = 0.195
-        ki = 0.1
+        ki = 0.05
         kd = 1.8
 
         kp_x = 0.015
