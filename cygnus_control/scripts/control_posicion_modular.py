@@ -73,7 +73,7 @@ class PIDController:
         elif self.error_sum_ < -self.max_windup_:
             self.error_sum_ = -self.max_windup_
         p = self.kp_ * error
-        rospy.loginfo("El valor de p es: " + str(p))
+        #rospy.loginfo("El valor de p es: " + str(p))
         i = self.ki_ * self.error_sum_
         d = self.kd_ * (self.alpha * delta_error / delta_time + \
             (1 - self.alpha)  * self.last_error_ / delta_time)
@@ -85,13 +85,18 @@ class PIDController:
         return p+d+i
 
 class angles_thrust:
-    def __init__(self, roll = 0.0, pitch = 0.0, yaw = 0.0, yaw_rate=0.0, thrust = 0.0,  time=0.0):
+    def __init__(self, roll = 0.0, pitch = 0.0, yaw = 0.0, yaw_rate=0.0, thrust = 0.0,  time=0.0, counter_target=0):
         self.roll_ = float(roll)
         self.pitch_ = float(pitch)
         self.yaw_ = float(yaw)
         self.yaw_rate_ = float(yaw_rate)
         self.thrust_ = float(thrust)
         self.time_ = float(time)
+        self.targets = counter_target
+    def setTarget(self, target):
+        self.targets = target
+    def getTarget(self):
+        return self.targets 
     def setRoll(self, roll):
         self.roll_ = roll
     def getRoll(self):
@@ -131,18 +136,21 @@ def control_x(pid_x, angles, actual_velocity):
     actual_yaw = angles.getYaw()
     actual_time = angles.getTime()
     diff_x = float(target_x) - float(actual_x)
-    u_x = pid_x.update(actual_time )
-    k_1 = 0.14
-    k_2 = 0.004
+    rospy.loginfo("el error = diff_X es: "+ str(diff_x))
+    #u_x = pid_x.update(actual_time )
+    k_1 = 0.6
+    k_2 = 0.005
     u_x_ = k_1*diff_x + k_2*(actual_velocity - 0) #- 0.08
-    omega_pitch_d  = 0.102*( math.cos(actual_yaw)*u_x_  + math.sin(actual_yaw)*0 )
-    if omega_pitch_d > 0.08725:
-        omega_pitch_d = 0.08725
-    elif omega_pitch_d < -0.08725:
-        omega_pitch_d = -0.08725
-    rospy.loginfo("ANGULO PITCH a publicar")
-    rospy.loginfo(omega_pitch_d)
+    omega_pitch_d  = 0.102*( math.cos(actual_yaw)*u_x_  + math.sin(actual_yaw)*u_x_ )
+    rospy.loginfo("U_X es: "+ str(omega_pitch_d))
+    if omega_pitch_d > 0.1745:
+        omega_pitch_d = 0.1745
+    elif omega_pitch_d < -0.1745:
+        omega_pitch_d = -0.1745
+    #rospy.loginfo("ANGULO PITCH a publicar")
+    #rospy.loginfo(omega_pitch_d)
     angles.setPitch(omega_pitch_d)
+    return diff_x
 
 def control_y(pid_y, angles, actual_velocity):
     target_y = pid_y.getTarget()
@@ -150,18 +158,20 @@ def control_y(pid_y, angles, actual_velocity):
     actual_yaw = angles.getYaw()
     actual_time = angles.getTime()
     diff_y = float(target_y) - float(actual_y)
-    u_y = pid_y.update(actual_time )
-    k_1 = 0.15
-    k_2 = 0.009
+    rospy.loginfo("el error = diff_Y es: "+ str(diff_y))
+    #u_y = pid_y.update(actual_time )
+    k_1 = 0.51
+    k_2 = 0.004
     u_y_ = k_1*diff_y + k_2*(actual_velocity - 0) #- 0.08
-    theta_roll_d  = 0.102*( math.sin(actual_yaw)*u_y  - math.cos(actual_yaw)*u_y )
-    if theta_roll_d > 0.08725:
-        theta_roll_d = 0.08725
-    elif theta_roll_d < -0.08725:
-        theta_roll_d = -0.08725
-    rospy.loginfo("ANGULO ROLL a publicar")
-    rospy.loginfo(theta_roll_d)
+    theta_roll_d  = 0.102*( math.sin(actual_yaw)*u_y_  - math.cos(actual_yaw)*u_y_ )
+    if theta_roll_d > 0.1745:
+        theta_roll_d = 0.1745
+    elif theta_roll_d < -0.1745:
+        theta_roll_d = -0.1745
+    #rospy.loginfo("ANGULO ROLL a publicar")
+    #rospy.loginfo(theta_roll_d)
     angles.setRoll(theta_roll_d)
+    return diff_y
 
 
 def control_z(pid, angles,pid_y):
@@ -171,9 +181,14 @@ def control_z(pid, angles,pid_y):
     actual_z = pid.getActualRef()
     diff = float(target) - float(actual_z)
     if (diff <= 0.002 and diff >= 0):
-        pid_x.setTarget(1.5)
-        pid_y.setTarget(1.5)
-        pid.setTarget(1.5)
+        #inde = angles.getTarget()
+        #pid_x.setTarget(targets_[inde][1])
+        #pid_y.setTarget(targets_[inde][2])
+        #pid.setTarget(targets_[inde][0])
+        #angles.setTarget(inde+1)
+        #pid.setTarget(1.5)
+        #pid_y.setTarget(1.5)
+        pass
     u_ = pid.update(actual_time )
     if diff>0:
         aux_thrust = 1.43*10 + actual_thrust*float(u_) 
@@ -184,14 +199,15 @@ def control_z(pid, angles,pid_y):
     elif aux_thrust>15:
         aux_thrust = 15.20000
     angles.setThrust(aux_thrust)
-    rospy.loginfo("saliendo control z")
+    return diff
+    #rospy.loginfo("saliendo control z")
     
     
 def odometry_callback(data, args):
     pub = args[0]
     empuje_angles_ = args[1]
-    rospy.loginfo("entrando odometria")
-    global pid_x, pid_y, pid, angles, empuje_angles_
+    #rospy.loginfo("entrando odometria")
+    global pid_x, pid_y, pid, angles, empuje_angles_, targets_
     pid_x.setActualRef(data.pose.pose.position.x)
     pid_y.setActualRef(data.pose.pose.position.y)
     pid.setActualRef(data.pose.pose.position.z)
@@ -200,18 +216,27 @@ def odometry_callback(data, args):
     euler = tf.transformations.euler_from_quaternion(quaternion)
     angles.setYaw(euler[2])
     angles.setTime( float( str(data.header.stamp.secs) +"." + str(data.header.stamp.nsecs) ) )
-    rospy.loginfo("saliendo odometria")
+    #rospy.loginfo("saliendo odometria")
 
-    rospy.loginfo("entrando a control_z")
-    control_z(pid,angles,pid_y)
+    #rospy.loginfo("entrando a control_z")
+    diff_z_ = control_z(pid,angles,pid_y)
 
-    rospy.loginfo("entrando a control y")
-    control_y(pid_y,angles, data.twist.twist.linear.y)
+    #rospy.loginfo("entrando a control y")
+    diff_y_ = control_y(pid_y,angles, data.twist.twist.linear.y)
 
-    rospy.loginfo("entrando a control x")
-    control_x(pid_x, angles, data.twist.twist.linear.x)
+    #rospy.loginfo("entrando a control x")
+    diff_x_ = control_x(pid_x, angles, data.twist.twist.linear.x)
 
-    rospy.loginfo("publicando")
+    if ((diff_z_ <= 0.002 and diff_z_ >= 0) and (diff_x_ <= 0.002 and diff_x_ >= -0.002) and (diff_y_ <= 0.039 and diff_y_ >= -0.039) ):
+        inde = angles.getTarget()
+        pid_x.setTarget(targets_[inde][1])
+        pid_y.setTarget(targets_[inde][2])
+        pid.setTarget(targets_[inde][0])
+        angles.setTarget(inde+1)
+    pid_x.setTarget(2)
+    pid_y.setTarget(2)
+    pid.setTarget(1)
+    #rospy.loginfo("publicando")
     publish(empuje_angles_,pub,angles)
 
 
@@ -232,9 +257,9 @@ def talker(pid_x_, pid_y_, pid_, empuje_angles_, angles_):
     while not rospy.is_shutdown():
     	rospy.loginfo("Subscribiendo a poseStamped")
     	rospy.Subscriber('/cygnus/command/pose', PoseStamped , pose_callback)
-    	rospy.loginfo("****************************************")
+    	#rospy.loginfo("****************************************")
     	if goal != True:
-    		rospy.loginfo("Nueva lectura de odometria")
+    		#rospy.loginfo("Nueva lectura de odometria")
     		rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback, (pub,empuje_angles_))
     	rospy.spin()
 
@@ -242,12 +267,12 @@ if __name__ == '__main__':
     try:
         #CONSTANTES
         kp = 0.195
-        ki = 0.05
+        ki = 0.04
         kd = 1.8
 
         kp_x = 0.015
         ki_x = 0
-        kd_x = 0
+        kd_x = 0.001
 
         kp_y = 0.16
         ki_y = 0
@@ -270,6 +295,9 @@ if __name__ == '__main__':
         empuje_angles = RollPitchYawrateThrust()
         goal = False
         angles = angles_thrust()
+
+        global targets_ 
+        targets_ = [[5.5,5.5,5.5],[5,-5.5,5.5],[5.5,-5.5,-5.5],[5,5.5,-5.5],[5.5,5.5,5.5],[5,0,0],[0.3,0,0]]
 
         rospy.loginfo("Iniciando el nodo")
         talker(pid_x,pid_y,pid, empuje_angles, angles )
