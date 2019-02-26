@@ -94,7 +94,7 @@ void PIDAttitudeControllerNode::OdometryCallback(const nav_msgs::OdometryConstPt
   //float kp = 13.8;
 
   //Prueba control PITCH - FUNCIONANDO - Valores indicados !
-  float k = 50;
+  float k = 60;
   float ky = 0.001;
   float kp = 13.8;
   float kq = 15;
