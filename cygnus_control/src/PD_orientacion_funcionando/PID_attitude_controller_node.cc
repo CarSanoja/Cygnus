@@ -94,26 +94,30 @@ void PIDAttitudeControllerNode::OdometryCallback(const nav_msgs::OdometryConstPt
   //float kp = 13.8;
 
   //Prueba control PITCH - FUNCIONANDO - Valores indicados !
-  float k = 60;
-  float ky = 0.001;
-  float kp = 13.8;
-  float kq = 15;
-  ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[0] );
+  float k_roll = 50;
+  float k_pitch =50;
+  float kp = 8;
+  float kq = 9;
+  float ky = 15;
+  float k_roll_int = 0;
+  float k_pitch_int = 0;
+
+  /*ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[0] );
   ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[1] );
   ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[2] );
   ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[3] );
   ROS_INFO("VELOCIDADES NUEVAS CON NUEVO CONTROL ");
   //Adicion de control sobre velocidad por variacion de angulos para reducir el error
-   ref_rotor_velocities[0] = ref_rotor_velocities[0] - k*errores.error_roll_vel_ - kp*errores.error_roll_p_vel - k*errores.error_pitch_vel_ - kq*errores.error_pitch_q_vel + ky*errores.error_yaw_vel_;
-   ref_rotor_velocities[1] = ref_rotor_velocities[1] - k*errores.error_roll_vel_ - kp*errores.error_roll_p_vel + k*errores.error_pitch_vel_ + kq*errores.error_pitch_q_vel - ky*errores.error_yaw_vel_;
-   ref_rotor_velocities[2] = ref_rotor_velocities[2] + k*errores.error_roll_vel_ + kp*errores.error_roll_p_vel + k*errores.error_pitch_vel_ + kq*errores.error_pitch_q_vel + ky*errores.error_yaw_vel_;
-   ref_rotor_velocities[3] = ref_rotor_velocities[3] + k*errores.error_roll_vel_ + kp*errores.error_roll_p_vel - k*errores.error_pitch_vel_ - kq*errores.error_pitch_q_vel - ky*errores.error_yaw_vel_; 
-   if ( (ref_rotor_velocities[0]>=650) && (ref_rotor_velocities[1]>=650)&&(ref_rotor_velocities[2]>=650)&&(ref_rotor_velocities[3]>=650) ){
-    ref_rotor_velocities[0] = ref_rotor_velocities[0] - 1.5;
-    ref_rotor_velocities[1] = ref_rotor_velocities[1] - 1.5;
-    ref_rotor_velocities[2] = ref_rotor_velocities[2] - 1.5;
-    ref_rotor_velocities[3] = ref_rotor_velocities[3] - 1.5;
-   }
+  /* ref_rotor_velocities[0] = ref_rotor_velocities[0] - k_roll*errores.error_roll_vel_ - kp*errores.error_roll_p_vel - k_roll_int*errores.roll_error_integratio - k_pitch*errores.error_pitch_vel_ - k_pitch_int*errores.pitch_error_integratio - kq*errores.error_pitch_q_vel - ky*errores.error_yaw_vel_;
+   ref_rotor_velocities[1] = ref_rotor_velocities[1] - k_roll*errores.error_roll_vel_ - kp*errores.error_roll_p_vel - k_roll_int*errores.roll_error_integratio + k_pitch*errores.error_pitch_vel_ + k_pitch_int*errores.pitch_error_integratio + kq*errores.error_pitch_q_vel + ky*errores.error_yaw_vel_;
+   ref_rotor_velocities[2] = ref_rotor_velocities[2] + k_roll*errores.error_roll_vel_ + kp*errores.error_roll_p_vel + k_roll_int*errores.roll_error_integratio + k_pitch*errores.error_pitch_vel_ + k_pitch_int*errores.pitch_error_integratio + kq*errores.error_pitch_q_vel - ky*errores.error_yaw_vel_;
+   ref_rotor_velocities[3] = ref_rotor_velocities[3] + k_roll*errores.error_roll_vel_ + kp*errores.error_roll_p_vel + k_roll_int*errores.roll_error_integratio - k_pitch*errores.error_pitch_vel_ - k_pitch_int*errores.pitch_error_integratio - kq*errores.error_pitch_q_vel + ky*errores.error_yaw_vel_; 
+   /*if ( (ref_rotor_velocities[0]>=652) && (ref_rotor_velocities[1]>=652)&&(ref_rotor_velocities[2]>=652)&&(ref_rotor_velocities[3]>=650) ){
+    ref_rotor_velocities[0] = ref_rotor_velocities[0] - 2.0;
+    ref_rotor_velocities[1] = ref_rotor_velocities[1] - 2.0;
+    ref_rotor_velocities[2] = ref_rotor_velocities[2] - 2.0;
+    ref_rotor_velocities[3] = ref_rotor_velocities[3] - 2.0;
+   }*/
    
    /////////////////////////////////////////////////////////////////////////////////
 

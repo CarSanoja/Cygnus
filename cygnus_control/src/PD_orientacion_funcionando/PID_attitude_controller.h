@@ -24,6 +24,8 @@ struct RetVal {
   double error_yaw_vel_;
   double error_roll_p_vel;
   double error_pitch_q_vel;
+  double roll_error_integratio;
+  double pitch_error_integratio;
 };
 
 namespace mav_control {
@@ -73,6 +75,10 @@ class PIDAttitudeController
 
   double roll_integrator_gain_;
   double pitch_integrator_gain_;
+
+  double roll_w_error_integration_;
+  double pitch_w_error_integration_;
+
   double max_integrator_error_;
 
   double p_gain_;
@@ -82,9 +88,15 @@ class PIDAttitudeController
   double roll_error_integration_;
   double pitch_error_integration_;
 
+  
+  double axis_velocity_p;
+  double axis_velocity_q;
+
   Eigen::Vector4d attitude_thrust_reference_;
   mav_msgs::EigenOdometry odometry_;
 
   RetVal ComputeDesiredAngularAcc(Eigen::Vector3d* angular_acc);
+
+  double ComputeAxisVelocity(double error_axis);
 };
 }
