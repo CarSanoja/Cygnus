@@ -7,11 +7,19 @@ project(cygnus_control)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs genmsg)
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs genmsg
+  cmake_modules
+  geometry_msgs
+  glog_catkin
+  mav_msgs
+  sensor_msgs
+  tf)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
+add_definitions(-std=c++11)
+set(CMAKE_BUILD_TYPE Release)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -99,9 +107,9 @@ find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs genmsg)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES cygnus_control
-#  CATKIN_DEPENDS other_catkin_pkg
+  INCLUDE_DIRS include
+  LIBRARIES pid_attitude_controller_lib
+  CATKIN_DEPENDS cmake_modules geometry_msgs glog_catkin mav_msgs roscpp sensor_msgs tf
 #  DEPENDS system_lib
 )
 
@@ -198,3 +206,20 @@ include ${catkin_INCLUDE_DIRS}
 #add_executable(talker src/talker.cpp)
 #target_link_libraries(talker ${catkin_LIBRARIES})
 #add_dependencies(talker beginner_tutorials_generate_messages_cpp)
+
+#############
+# LIBRARIES #
+#############
+add_library(pid_attitude_controller_lib
+  src/PID_attitude_controller.cc
+  )
+
+############
+# BINARIES #
+############
+add_executable(mav_pid_attitude_controller_node
+  src/PID_attitude_controller_node.cc
+)
+add_dependencies(mav_pid_attitude_controller_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(mav_pid_attitude_controller_node pid_attitude_controller_lib ${catkin_LIBRARIES})
+

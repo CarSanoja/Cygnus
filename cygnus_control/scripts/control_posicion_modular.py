@@ -146,7 +146,7 @@ def publish(message, pub_topic, angles, tasa):
     message.pitch = angles.getPitch()
     message.yaw_rate = angles.getRerror()
     pub_topic.publish(message)
-    tasa.sleep()
+    #tasa.sleep()
 
 
 def control_x(pid_x, angles, actual_velocity):
@@ -224,8 +224,8 @@ def control_z(pid, angles,pid_y, roll, pitch):
     #    aux_thrust = 0.98*01.43*10 + actual_thrust*float(u_) 
     if aux_thrust<0:
         aux_thrust = 0
-    elif aux_thrust>19.0976:
-        aux_thrust = 19.0976
+    elif aux_thrust>34:
+        aux_thrust = 34
     angles.setThrust(aux_thrust)
     return diff
     #rospy.loginfo("saliendo control z")
@@ -256,14 +256,14 @@ def odometry_callback(data, args):
     #rospy.loginfo("entrando a control x")
     diff_x_ = control_x(pid_x, angles, data.twist.twist.linear.x)
 
-    #if ((diff_z_ <= 0.003 and diff_z_ >= 0) and (diff_x_ <= 0.039 and diff_x_ >= -0.039) and (diff_y_ <= 0.039 and diff_y_ >= -0.039) ):
-    if (diff_z_ <= 0.002 and diff_z_ >= 0):
-        pass
-        #inde = angles.getTarget()
-        #pid_x.setTarget(targets_[inde][1])
-        #pid_y.setTarget(targets_[inde][2])
-        #pid.setTarget(targets_[inde][0])
-        #angles.setTarget(inde+1)
+    if ((diff_z_ <= 0.003 and diff_z_ >= 0) and (diff_x_ <= 0.039 and diff_x_ >= -0.039) and (diff_y_ <= 0.039 and diff_y_ >= -0.039) ):
+    #if (diff_z_ <= 0.002 and diff_z_ >= 0):
+        #pass
+        inde = angles.getTarget()
+        pid_x.setTarget(targets_[inde][1])
+        pid_y.setTarget(targets_[inde][2])
+        pid.setTarget(targets_[inde][0])
+        angles.setTarget(inde+1)
     #rospy.loginfo("VELOCIDADES LINEALES")
     #rospy.loginfo("EN X:"+str(data.twist.twist.linear.x))
     #rospy.loginfo("EN Y:"+str(data.twist.twist.linear.y))
@@ -295,7 +295,7 @@ def talker(pid_x_, pid_y_, pid_, empuje_angles_, angles_):
     	#rospy.loginfo("****************************************")
     	if goal != True:
     		#rospy.loginfo("Nueva lectura de odometria")
-    		rospy.Subscriber('/cygnus/ground_truth/odometry', Odometry, odometry_callback, (pub,empuje_angles_,rate))
+    		rospy.Subscriber('/cygnus/msf_core/odometry', Odometry, odometry_callback, (pub,empuje_angles_,rate))
     	rospy.spin()
 
 if __name__ == '__main__':
@@ -309,9 +309,9 @@ if __name__ == '__main__':
         ki_x = 0.5
         kd_x = 7.0
 
-        kp_y = 7.076
+        kp_y = 6.076
         ki_y = 0.5
-        kd_y = 7.0
+        kd_y = 6.0
 
         umax = 5.0 # max controller output, (N)
         alpha = 1 # derivative filter smoothing factor

@@ -19,13 +19,9 @@
 #include <ros/ros.h>
 
 struct RetVal {
-  double error_roll_vel_;
-  double error_pitch_vel_;
-  double error_yaw_vel_;
-  double error_roll_p_vel;
-  double error_pitch_q_vel;
-  double roll_error_integratio;
-  double pitch_error_integratio;
+  double tao_x;
+  double tao_y;
+  double tao_z;
 };
 
 namespace mav_control {

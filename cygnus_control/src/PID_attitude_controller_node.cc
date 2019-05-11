@@ -45,11 +45,13 @@ PIDAttitudeControllerNode::PIDAttitudeControllerNode(const ros::NodeHandle& nh,
 
   motor_velocity_reference_pub_ = nh_.advertise<mav_msgs::Actuators>(
       mav_msgs::default_topics::COMMAND_ACTUATORS, 1);
+  control_output_pub_ = nh_.advertise<mav_msgs::Actuators>(
+      "control_variables", 1);
   //ROS_INFO("LOADING MOTOR [%s] PLUGIN", mav_msgs::default_topics::COMMAND_ACTUATORS);
 
-  dynamic_reconfigure::Server<mav_linear_mpc::PIDAttitudeConfig>::CallbackType f;
-  f = boost::bind(&PIDAttitudeControllerNode::DynConfigCallback, this, _1, _2);
-  dyn_config_server_.setCallback(f);
+  //dynamic_reconfigure::Server<mav_linear_mpc::PIDAttitudeConfig>::CallbackType f;
+  //f = boost::bind(&PIDAttitudeControllerNode::DynConfigCallback, this, _1, _2);
+  //dyn_config_server_.setCallback(f);
 }
 
 PIDAttitudeControllerNode::~PIDAttitudeControllerNode()
@@ -85,6 +87,10 @@ void PIDAttitudeControllerNode::OdometryCallback(const nav_msgs::OdometryConstPt
   mav_msgs::Actuators turning_velocities_msg;
   turning_velocities_msg.angular_velocities.clear();
 
+  mav_msgs::Actuators control_out_msg;
+  control_out_msg.angular_velocities.clear();
+
+
   ////////////////////////////////////////////////////////////////////////////////7
   RetVal errores;
   errores = PID_attitude_controller_.CalculateRotorVelocities(&ref_rotor_velocities);
@@ -94,13 +100,13 @@ void PIDAttitudeControllerNode::OdometryCallback(const nav_msgs::OdometryConstPt
   //float kp = 13.8;
 
   //Prueba control PITCH - FUNCIONANDO - Valores indicados !
-  float k_roll = 50;
+  /*float k_roll = 50;
   float k_pitch =50;
   float kp = 8;
   float kq = 9;
   float ky = 15;
   float k_roll_int = 0;
-  float k_pitch_int = 0;
+  float k_pitch_int = 0;*/
 
   /*ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[0] );
   ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[1] );
@@ -128,12 +134,19 @@ void PIDAttitudeControllerNode::OdometryCallback(const nav_msgs::OdometryConstPt
     ROS_INFO("Velocidades [%f] ", ref_rotor_velocities[i] );}
   turning_velocities_msg.header.stamp = odometry_msg->header.stamp;
 
+  control_out_msg.angular_velocities.push_back(errores.tao_x) ;
+  control_out_msg.angular_velocities.push_back(errores.tao_y) ;
+  control_out_msg.angular_velocities.push_back(errores.tao_z) ;
+  control_out_msg.header.stamp = odometry_msg->header.stamp;
+
   motor_velocity_reference_pub_.publish(turning_velocities_msg);
 
+  
+  control_output_pub_.publish(control_out_msg);
   //ros::Duration(0.005).sleep();
 }
 
-void PIDAttitudeControllerNode::DynConfigCallback(mav_linear_mpc::PIDAttitudeConfig &config,
+/*void PIDAttitudeControllerNode::DynConfigCallback(mav_linear_mpc::PIDAttitudeConfig &config,
                                                   uint32_t level)
 {
 
@@ -141,7 +154,7 @@ void PIDAttitudeControllerNode::DynConfigCallback(mav_linear_mpc::PIDAttitudeCon
                                             config.q_gain, config.r_gain, config.roll_int_gain,
                                             config.pitch_int_gain);
 }
-
+*/
 }
 
 int main(int argc, char** argv)
